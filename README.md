@@ -96,14 +96,14 @@ loss of funds or damages associated to this software.
 
 &nbsp;
 
-**Send comment and feedback** - <https://keybase.io/toddwarner>
+**Have comment or feedback?** <https://keybase.io/toddwarner> or come say hello
+to me on one of the various forums or chat platforms. I am t0dd or taw in most
+places.
 
-Come say hello to me. I am t0dd or taw in various forums, chat platforms, etc.
-
-If you like my BEAM stuff, also check out my Dash builds
-(<https://github.com/taw00/dashcore-rpm>), and my more experimental Zcash
-builds (<https://github.com/taw00/zcash-rpm>). I am a fan of both endeavors.
-Don't troll me. :)
+If you like my Beam stuff, also check out my
+[Dash](https://github.com/taw00/dashcore-rpm) (mature) and
+[Zcash](https://github.com/taw00/zcash-rpm) (more experimental) builds. I am a
+fan of all of these endeavors.  Don't troll me. :)
 
 ---
 [1] _Note: Only Fedora is being targeted for builds at this time. CentOS and
