@@ -6,12 +6,14 @@
 # commandline) Wallet, and Full Node.
 #
 # Consumer facing...
-# * BeamWallet (desktop)
-# * beam-wallet (cli)
-# * beam-node
-# * beam-miner-client
-# * beam-wallet-api
-# * beam-explorer-node
+# * WALLETs
+#   - BeamWallet (desktop) -- rpm is beam-wallet-desktop
+#   - beam-wallet (cli) -- rpm is beam-wallet-cli
+#   - beam-wallet-api -- rpm is beam-wallet-api (sucked in with beam-wallet-desktop or beam-wallet-cli RPM)
+# * NODEs
+#   - beam-node -- rpm is beam-node
+#   - beam-miner-client -- rpm is beam-node (for now)
+#   - beam-explorer-node -- rpm is beam-node (for now)
 #
 # Specialized (not always built)...
 # * beam-debuginfo
@@ -48,7 +50,7 @@ Version: %{vermajor}.%{verminor}
 # package release, and potentially extrarel
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.4
+  %define _pkgrel 0.5
 %endif
 
 # MINORBUMP - edit this
@@ -171,11 +173,15 @@ BuildRequires: tree vim-enhanced less findutils
 %endif
 
 
-# beam-wallet
-%package wallet
+# beam-wallet-desktop
+%package wallet-desktop
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol (desktop reference client)
-# https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
+# beam-wallet --> beam-wallet-desktop as of -0.5 -- sadly, that 0.5 is not honored by the Provides and Obsoletes :(
+Provides: beam-wallet = 1.0.3967-0.5
+Obsoletes: beam-wallet < 1.0.3967-0.5
+Requires: beam-wallet-api = %{version}-%{release}
 Requires: qt5-qtquickcontrols qt5-qtquickcontrols2
+# https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
 Requires: firewalld-filesystem
 Requires(post): firewalld-filesystem
 Requires(postun): firewalld-filesystem
@@ -188,6 +194,17 @@ Requires:       qt5-qtwayland
 BuildRequires:  qt5-qtwayland-devel
 %endif
 
+# beam-wallet-cli
+%package wallet-cli
+Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol (commandline-interfacing reference client)
+Requires: beam-wallet-api = %{version}-%{release}
+Requires: firewalld-filesystem
+Requires(post): firewalld-filesystem
+Requires(postun): firewalld-filesystem
+
+# beam-wallet-api
+%package wallet-api
+Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol (wallet API)
 
 # beam-node
 %package node
@@ -208,20 +225,6 @@ Requires(postun): /usr/sbin/semodule, /sbin/restorecon, /sbin/fixfiles
 Requires: openssl-libs
 
 
-## dashcore-libs
-#%%package libs
-#Summary: Peer-to-peer, payments-focused, fungible digital currency, protocol, and platform for payments and decentralized applications (consensus libraries)
-#
-
-## dashcore-devel
-#%%package devel
-#Summary: Peer-to-peer, payments-focused, fungible digital currency, protocol, and platform for payments and decentralized applications (dev libraries and headers)
-#Requires: dashcore-libs = %%{version}-%%{release}
-
-
-## dashcore-utils
-#%%package utils
-#Summary: Peer-to-peer, payments-focused, fungible digital currency, protocol, and platform for payments and decentralized applications (commandline utilities)
 
 # beam src.rpm
 %description
@@ -235,10 +238,10 @@ innovative Mimblewimble protocol.
 Learn more at www.beam.mw
 
 
-# beam-wallet
-%description wallet
+# beam-wallet-desktop
+%description wallet-desktop
 BEAM reference implementation. This package provides a user-friendly(er)
-graphical wallet manager (beam-wallet) for personal use.
+graphical wallet manager (BeamWallet) for personal use.
 
 BEAM is a next generation confidential cryptocurrency based on an elegant and
 innovative Mimblewimble protocol. 
@@ -258,62 +261,28 @@ innovative Mimblewimble protocol.
 Learn more at www.beam.mw
 
 
+# beam-wallet-cli
+%description wallet-cli
+BEAM reference implementation. This package provides a powerful wallet for use
+on the commandline (beam-wallet). For a more user-friendly experience, if you
+need a desktop interface, install the beam-wallet RPM instead.
 
-## dashcore-libs
-#%%description libs
-#This package provides libdashconsensus, which is used by third party
-#applications to verify scripts (and other functionality in the future).
-#
-#Dash (Digital Cash) is an open source peer-to-peer cryptocurrency with a strong
-#focus on serving as a superior means of payment. Dash offers a form of money
-#that is portable, inexpensive, divisible and incredibly fast. It can be spent
-#securely both online and in person with minimal transaction fees. Dash offers
-#instant transactions (InstantSend), fungible transactions (PrivateSend), and,
-#as a network, is self-governing and self-funding. This decentralized governance
-#and budgeting system makes is the first ever successful decentralized
-#autonomous organization (DAO). Dash is also a platform for innovative
-#decentralized crypto-tech.
-#
-#Learn more at www.dash.org.
-#
-#
-## dashcore-devel
-#%%description devel
-#This package provides the libraries and header files necessary to compile
-#programs which use libdashconsensus.
-#
-#Dash (Digital Cash) is an open source peer-to-peer cryptocurrency with a strong
-#focus on serving as a superior means of payment. Dash offers a form of money
-#that is portable, inexpensive, divisible and incredibly fast. It can be spent
-#securely both online and in person with minimal transaction fees. Dash offers
-#instant transactions (InstantSend), fungible transactions (PrivateSend), and,
-#as a network, is self-governing and self-funding. This decentralized governance
-#and budgeting system makes is the first ever successful decentralized
-#autonomous organization (DAO). Dash is also a platform for innovative
-#decentralized crypto-tech.
-#
-#Learn more at www.dash.org.
-#
-#
-## dashcore-utils
-#%%description utils
-#Dash is Digital Cash
-#
-#This package provides dash-cli, a utility to communicate with and control a
-#Dash server via its RPC protocol, and dash-tx, a utility to create custom
-#Dash transactions.
-#
-#Dash (Digital Cash) is an open source peer-to-peer cryptocurrency with a strong
-#focus on serving as a superior means of payment. Dash offers a form of money
-#that is portable, inexpensive, divisible and incredibly fast. It can be spent
-#securely both online and in person with minimal transaction fees. Dash offers
-#instant transactions (InstantSend), fungible transactions (PrivateSend), and,
-#as a network, is self-governing and self-funding. This decentralized governance
-#and budgeting system makes is the first ever successful decentralized
-#autonomous organization (DAO). Dash is also a platform for innovative
-#decentralized crypto-tech.
-#
-#Learn more at www.dash.org.
+BEAM is a next generation confidential cryptocurrency based on an elegant and
+innovative Mimblewimble protocol. 
+
+Learn more at www.beam.mw
+
+
+# beam-wallet-api
+%description wallet-api
+BEAM reference implementation. This package provides a powerful wallet API
+(application programming interface) that enables many programmable elements for
+interfacing with a running beam wallet.
+
+BEAM is a next generation confidential cryptocurrency based on an elegant and
+innovative Mimblewimble protocol. 
+
+Learn more at www.beam.mw
 
 
 
@@ -401,24 +370,16 @@ install -d -m755 -p %{buildroot}%{_libdir}/pkgconfig
 install -d -m755 -p %{buildroot}%{_includedir}
 
 # Application as systemd service directory structure
-# /etc/beam/
-install -d -m750 -p %{buildroot}%{_sysconfdir}/beam
-# /var/lib/beam/...
+# /var/lib/beam/... - beamuser's $HOME directory
 install -d -m750 -p %{buildroot}%{_sharedstatedir}/beam
-# /var/log/beam/...
-install -d -m700 %{buildroot}%{_localstatedir}/log/beam
-# /etc/sysconfig/beam-node-scripts/
-install -d %{buildroot}%{_sysconfdir}/sysconfig/beam-node-scripts
+## /etc/sysconfig/beam-node-scripts/
+#install -d %%{buildroot}%%{_sysconfdir}/sysconfig/beam-node-scripts
 
 # GUI wallet
 # ...bins
-#cp %%{srccodetree}/ui/BeamWallet %%{buildroot}%%{_bindir}/beam-wallet
 cp %{srccodetree}/ui/BeamWallet %{buildroot}%{_bindir}/
 install -m755  %{srccontribtree}/linux/desktop/BeamWallet.wrapper.sh %{buildroot}%{_bindir}/
-# ...config and desktop xml stuff - the beam-team wants the beam-wallet-cfg in the /usr/bin/dir !?!
-#install -D -m644 %%{srccodetree}/ui/beam-wallet.cfg %%{buildroot}%%{_bindir}/beam-wallet.cfg
-#install -D -m644 %%{srccodetree}/ui/beam-wallet.cfg %%{buildroot}%%{_sharedstatedir}/beam/beam-wallet.cfg.template-desktop
-# the config file is going to become a "document"
+# ...config and desktop xml stuff - the shipped config file becomes a "document"
 install -D -m644 %{srccodetree}/ui/beam-wallet.cfg %{srccodetree}/ui/beam-wallet.cfg.template-desktop
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{srccontribtree}/linux/desktop/BeamWallet.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/BeamWallet.desktop
@@ -446,41 +407,24 @@ install -D -m644 beam-hicolor-scalable.svg %{buildroot}%{_datadir}/icons/hicolor
 cd ../../..
 # CLI wallet
 cp %{srccodetree}/wallet/beam-wallet %{buildroot}%{_bindir}/
-#install -D -m644 %%{srccodetree}/wallet/beam-wallet.cfg %%{buildroot}%%{_sharedstatedir}/beam/beam-wallet.cfg.template-cli
-# the config file is going to become a "document"
+# ...the shipped config file becomes a "document"
 install -D -m644 %{srccodetree}/wallet/beam-wallet.cfg %{srccodetree}/wallet/beam-wallet.cfg.template-cli
 # API interface
 cp %{srccodetree}/wallet/wallet-api %{buildroot}%{_bindir}/beam-wallet-api
 # node
 cp %{srccodetree}/beam/beam-node %{buildroot}%{_bindir}/
-#install -D -m644 %%{srccodetree}/beam/beam-node.cfg %%{buildroot}%%{_bindir}/beam-node.cfg
-#install -D -m644 %%{srccodetree}/beam/beam-node.cfg %%{buildroot}%%{_sharedstatedir}/beam/beam-node.cfg.template
-# the config file is going to become a "document"
+# ...the shipped config file becomes a "document"
 install -D -m644 %{srccodetree}/beam/beam-node.cfg %{srccodetree}/beam/beam-node.cfg.template
 # explorer node
 cp %{srccodetree}/explorer/explorer-node %{buildroot}%{_bindir}/beam-explorer-node
 # miner client
 cp %{srccodetree}/pow/miner_client %{buildroot}%{_bindir}/beam-miner-client
 
-# Config
-# Install default configuration file (from contrib)
-%if %{targetIsProduction}
-%define testnet 0
-%else
-%define testnet 1
-%endif
-
 ## System services
 #install -D -m600 -p %%{srccontribtree}/linux/systemd/etc-sysconfig_beam-node %%{buildroot}%%{_sysconfdir}/sysconfig/beam-node
 #install -D -m755 -p %%{srccontribtree}/linux/systemd/etc-sysconfig-beam-node-scripts_beam-node.send-email.sh %%{buildroot}%%{_sysconfdir}/sysconfig/beam-node-scripts/beam-node.send-email.sh
 #install -D -m644 -p %%{srccontribtree}/linux/systemd/usr-lib-systemd-system_beam-node.service %%{buildroot}%%{_unitdir}/beam-node.service
 #install -D -m644 -p %%{srccontribtree}/linux/systemd/usr-lib-tmpfiles.d_beam-node.conf %%{buildroot}%%{_tmpfilesdir}/beam-node.conf
-
-# Log files
-# ...logrotate file rules
-#install -D -m644 -p %%{srccontribtree}/linux/logrotate/etc-logrotate.d_beam %%{buildroot}/etc/logrotate.d/beam
-# ...ghosted log files - need to exist in the installed buildroot
-touch %{buildroot}%{_localstatedir}/log/beam/debug.log
 
 ## Service definition files for firewalld for full and master nodes
 #install -D -m644 -p %%{srccontribtree}/linux/firewalld/usr-lib-firewalld-services_dashcore.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore.xml
@@ -490,109 +434,90 @@ touch %{buildroot}%{_localstatedir}/log/beam/debug.log
 
 
 
-# beam-wallet
-%post wallet
+# beam-wallet-desktop
+%post wallet-desktop
+# Update the desktop database
+# https://fedoraproject.org/wiki/NewMIMESystem
+/usr/bin/update-desktop-database &> /dev/null || :
 # firewalld only partially picks up changes to its services files without this
 # https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
 # the macro'ed reload is not working for some reason
 #%%firewalld_reload
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
-# Update the desktop database
-# https://fedoraproject.org/wiki/NewMIMESystem
-/usr/bin/update-desktop-database &> /dev/null || :
-
-%postun wallet
+%postun wallet-desktop
 # Update the desktop database
 # https://fedoraproject.org/wiki/NewMIMESystem
 /usr/bin/update-desktop-database &> /dev/null || :
 # the macro'ed reload is not working for some reason
 #%%firewalld_reload
+test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+
+# beam-wallet-cli
+%post wallet-cli
+test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+
+%postun wallet-cli
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 # beam-node
 %pre node
 # This is for the case that you run BEAM as a service (systemctl start beam-node ?t0dd?)
-# _sharedstatedir is /var/lib
+# _sharedstatedir is /var/lib - /var/lib/beam is the $HOME for the beamuser user
 getent group beamuser >/dev/null || groupadd -r beamuser
 getent passwd beamuser >/dev/null || useradd -r -g beamuser -d %{_sharedstatedir}/beam -s /sbin/nologin -c "System user 'beamuser' to isolate BEAM execution" beamuser
-
-# Notes:
-#  _localstatedir is /var
-#  _sharedstatedir is /var/lib
-#  /var/lib/beam is the $HOME for the beamuser user
-
-#t0dd: DEBUG IS DIFFERENT FOR BEAM (versus dash)
-## Fix the debug.log directory structure if it is not aligned to /var/log/
-## standards.
-## If /var/lib/beam/debug.log is not a symlink, we need to fix that.
-##    /var/lib/beam/debug.log -> /var/log/beam/debug.log
-#%%define vlibb %%{_sharedstatedir}/beam
-#%%define vlibb_dl %%{vlibb}/debug.log
-#%%define vlogb %%{_localstatedir}/log/beam
-#%%define vlogb_dl %%{vlogb}/debug.log
-## If either debug.log in /var/lib/beam is not a symlink, we need to move
-## files and then fix the symlinks Hopefully this doesn't break because
-## beam may have debug.log open
-#if [ -e %%{vlibb_dl} -a -f %%{vlibb_dl} -a ! -h %%{vlibb_dl} ]
-#then
-#   mv %%{vlibb_dl}* %%{vlogb}/
-#   ln -s %%{vlogb_dl} %%{vlibb_dl}
-#   chown beamuser:beamuser %%{vlibb_dl}
-#   chown -R beamuser:beamuser %%{vlogb}
-#   chmod 644 %%{vlogb_dl}*
-#fi
-
-exit 0
-
 
 # beam-node
 %post node
 #%%systemd_post beam-node.service
-# firewalld only partially picks up changes to its services files without this
-# https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
-# the macro'ed reload is not working for some reason
-#%%firewalld_reload
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
-
 
 # beam-node
 %posttrans node
-/usr/bin/systemd-tmpfiles --create
+#/usr/bin/systemd-tmpfiles --create
 #TODO: Replace above with %%tmpfiles_create_package macro
 #TODO: https://github.com/systemd/systemd/blob/master/src/core/macros.systemd.in
-
 
 # beam-node
 %preun node
 #%%systemd_preun beam-node.service
 
-
 # beam-node
 %postun node
 #%%systemd_postun beam-node.service
-# the macro'ed reload is not working for some reason
-#%%firewalld_reload
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 
-# beam-wallet
-%files wallet
+# beam-wallet-desktop
+%files wallet-desktop
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
 %doc %{srccodetree}/ui/beam-wallet.cfg.template-desktop
-%doc %{srccodetree}/wallet/beam-wallet.cfg.template-cli
 %{_bindir}/BeamWallet
 %{_bindir}/BeamWallet.wrapper.sh
-%{_bindir}/beam-wallet
-%{_bindir}/beam-wallet-api
 %{_datadir}/applications/BeamWallet.desktop
 %{_metainfodir}/BeamWallet.appdata.xml
 %{_datadir}/icons/*
 #%%{_usr_lib}/firewalld/services/dashcore.xml
 #%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
+
+# beam-wallet-cli
+%files wallet-cli
+%defattr(-,root,root,-)
+%license %{srccodetree}/LICENSE
+%doc %{srccodetree}/wallet/beam-wallet.cfg.template-cli
+%{_bindir}/beam-wallet
+%{_bindir}/beam-wallet-api
+#%%{_usr_lib}/firewalld/services/dashcore.xml
+#%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
+
+# beam-wallet-api
+%files wallet-api
+%defattr(-,root,root,-)
+%license %{srccodetree}/LICENSE
+%{_bindir}/beam-wallet-api
 
 
 # beam-node
@@ -600,59 +525,25 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
 %doc %{srccodetree}/beam/beam-node.cfg.template
+%{_bindir}/beam-node
+%{_bindir}/beam-miner-client
+%{_bindir}/beam-explorer-node
 
 # Application as systemd service directory structure
 %defattr(-,beamuser,beamuser,-)
-# /etc/beam/
-%dir %attr(750,beamuser,beamuser) %{_sysconfdir}/beam
-# /var/lib/beam/...
+# /var/lib/beam/... - beamuser's $HOME dir
 %dir %attr(750,beamuser,beamuser) %{_sharedstatedir}/beam
-# /var/log/beam/...
-%dir %attr(700,beamuser,beamuser) %{_localstatedir}/log/beam
-# /etc/sysconfig/beam-node-scripts/
-%dir %attr(755,beamuser,beamuser) %{_sysconfdir}/sysconfig/beam-node-scripts
+## /etc/sysconfig/beam-node-scripts/
+#%%dir %%attr(755,beamuser,beamuser) %%{_sysconfdir}/sysconfig/beam-node-scripts
 %defattr(-,root,root,-)
 
 #%%config(noreplace) %%attr(600,root,root) %%{_sysconfdir}/sysconfig/beam-node
 #%%attr(755,root,root) %%{_sysconfdir}/sysconfig/beam-node-scripts/beam-node.send-email.sh
 
-# The logs
-#%%attr(644,root,root) /etc/logrotate.d/dashcore
-# ...log files - they don't initially exist, but we still own them
-%ghost %{_localstatedir}/log/beam/debug.log
-%defattr(-,root,root,-)
-
 #%%{_unitdir}/beam-node.service
 #%%{_usr_lib}/firewalld/services/dashcore.xml
 #%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
-%{_bindir}/beam-node
-%{_bindir}/beam-miner-client
-%{_bindir}/beam-explorer-node
 #%%{_tmpfilesdir}/beam-node.conf
-
-
-
-## dashcore-libs
-#%%files libs
-#%%defattr(-,root,root,-)
-#%%license %%{srccodetree}/COPYING
-#%%{_libdir}/*
-
-
-## dashcore-devel
-#%%files devel
-#%%defattr(-,root,root,-)
-#%%license %%{srccodetree}/COPYING
-#%%{_includedir}/*
-#%%{_libdir}/*
-
-
-## dashcore-utils
-#%%files utils
-#%%defattr(-,root,root,-)
-#%%license %%{srccodetree}/COPYING
-#%%{_bindir}/dash-cli
-#%%{_bindir}/dash-tx
 
 
 # Beam Information
@@ -666,23 +557,24 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #
 # Beam on Fedora/CentOS/RHEL...
 #   * Git Repo: https://github.com/taw00/beam-rpm
-#   * Documentation: 
-#
-# The last major testnet effort...
-#   * Announcement: 
-#   * Documentation:  
-#     
 #
 # Source snapshots...
 #     https://github.com/BeamMW/beam/tags
 #     https://github.com/BeamMW/beam/releases
 #
 # Beam git repos...
-#   * https://github.com/BeamMW/beam
+#   * https://github.com/BeamMW
 
 %changelog
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.5.testing.taw
+  - MUCH cleanup
+  - Split out beam-wallet-cli and beam-wallet-api packages
+  - Renamed package: beam-wallet --> beam-wallet-desktop
+  - Removed reference to /var/log/debug since we'll never probably use it
+  - Removed reference to /etc/beam since we'll never probably use it
+
 * Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.4.testing.taw
-  - made shipped beam-wallet.cfg and beam-node.cfg files "templates" and  
+  - shipped beam-wallet.cfg and beam-node.cfg files are "templates" and  
     organized as docs
   - fixed license label. Apache-2.0 instead of ASL 2.0 -- there is  
     discrepancy in the RPM documentation

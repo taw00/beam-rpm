@@ -24,7 +24,7 @@ RPM whose installation is demonstated below.
 # My system is Fedora...
 sudo rpm --import https://keybase.io/toddwarner/key.asc
 sudo dnf install -y https://raw.githubusercontent.com/taw00/beam-rpm/master/toddpkgs-beam-repo.fedora.testing.rpm
-sudo dnf install -y beam-wallet --refresh
+sudo dnf install -y beam-wallet-desktop --refresh
 ```
 
 *Run the wallet application:* Browse your desktop menus and search for the icon
