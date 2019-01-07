@@ -3,18 +3,20 @@
 _"BEAM is a next generation confidential cryptocurrency based on an elegant and
 innovative Mimblewimble protocol."_
 
+This github repository is used to develop and maintain packages that make
+installing and updating Beam on Fedora Linux[1] native to the platform, more
+consistent, less error-prone, and more complete. These builds are not officially
+blessed by anyone but me, so be cautioned.
+
 See also: <https://www.beam.mw/>,
 <https://beam-docs.readthedocs.io/en/latest/>,
 <https://github.com/BeamMW/beam>, and <https://github.com/BeamMW/beam/wiki>
 
-This github repository is used to develop and maintain Beam natively built and
-packaged for Fedora Linux[1]. These builds are not officially blessed by anyone
-but me, so be cautioned.
-
-**Source:** This github only provides source RPM build trees and instruction.
+**Source:** This github provides source RPM build trees and instruction only.
 
 **Binaries:** Binary RPMs built from the source provided here are maintained
-separately in COPR. Access provided by repo RPM installed as shown below.
+separately in COPR. Access to the Beam package repositories is provided by repo
+RPM whose installation is demonstated below.
 
 ## *"TL;DR ...I just want to install the Beam GUI Wallet!"*
 
@@ -75,11 +77,12 @@ been filed on this point: <https://github.com/BeamMW/beam-docs/issues/2>
 
 ## Disclaimers!
 
-**Disclaimer1:** Please note that these builds have not been endorsed by the Beam Team. I
-have a reputation though from building Dash RPMs for years and years that have
-been blessed by that team. So take that for what it is worth. That being said,
-proceed with caution and as always... Trust no one. At least be suspicious of
-everyone. :)
+**Disclaimer1:** Please note that these builds have not been endorsed by the
+Beam Team. I have a reputation though from building (Dash
+RPMs)[https://github.com/taw00/dashcore-rpm] for years and years that have been
+semi-officially-blessed by that team. So take that for what it is worth. That
+being said, proceed with caution and as always... Trust no one. At least be
+suspicious of everyone. :)
 
 **Disclaimer2:**  
 These packages have been successfully built and tested, but I lay no claim
