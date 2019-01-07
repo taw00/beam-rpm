@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=Beam Wallet
+Comment=Scalable confidential cryptocurrency - a peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol (desktop reference client)
+Exec=beam-wallet.wrapper.sh %U
+Terminal=false
+Type=Application
+Icon=beam
+#MimeType=x-scheme-handler/beam;
+MimeType=application/x-beam-item;
+Categories=Network;Finance;
+X-Desktop-File-Install-Version=0.23
