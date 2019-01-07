@@ -73,6 +73,8 @@ project documentation suggests that the configuration file needs to be located
 where the binary executable is located, and this is incorrect. An issue has
 been filed on this point: <https://github.com/BeamMW/beam-docs/issues/2>
 
+---
+
 &nbsp;
 
 ## Disclaimers!
@@ -95,6 +97,8 @@ software. I.e., These will probably work for you, but I can't be liable for any
 loss of funds or damages associated to this software.
 
 &nbsp;
+
+---
 
 **Have comment or feedback?** <https://keybase.io/toddwarner> or come say hello
 to me on one of the various forums or chat platforms. I am t0dd or taw in most
