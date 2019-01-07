@@ -25,12 +25,12 @@ RPM whose installation is demonstated below.
 sudo rpm --import https://keybase.io/toddwarner/key.asc
 sudo dnf install -y https://raw.githubusercontent.com/taw00/beam-rpm/master/toddpkgs-beam-repo.fedora.testing.rpm
 sudo dnf install -y beam-wallet --refresh
-BeamWallet.wrapper.sh
 ```
 
-**Boom! Done!** You should now see a Beam Wallet graphical application
-open up on your screen. Note that there is now also a reference to it in your
-desktop menus (you don't have to run it from the commandline).
+*Run the wallet application:* Browse your desktop menus and search for the icon
+for Beam... click and go!
+
+Alternatively, you can kick off the wallet application from the commandline: `BeamWallet.wrapper.sh`
 
 
 ## *"TL;DR ...I just want to install the Beam Node!"*
