@@ -6,8 +6,8 @@
 # commandline) Wallet, and Full Node.
 #
 # Consumer facing...
-# * beam-wallet
-# * beam-wallet-cli
+# * BeamWallet (desktop)
+# * beam-wallet (cli)
 # * beam-node
 # * beam-miner-client
 # * beam-wallet-api
@@ -48,7 +48,7 @@ Version: %{vermajor}.%{verminor}
 # package release, and potentially extrarel
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.1
+  %define _pkgrel 0.4
 %endif
 
 # MINORBUMP - edit this
@@ -150,7 +150,8 @@ Source1: https://github.com/taw00/beam-rpm/blob/master/source/testing/SOURCES/%{
 %define _hardened_build 1
 
 # https://fedoraproject.org/wiki/Licensing:Main?rd=Licensing
-License: ASL 2.0
+# https://spdx.org/licenses/
+License: Apache-2.0
 URL: http://www.beam.mw/
 # Note, for example, this will not build on ppc64le
 ExclusiveArch: x86_64 i686 i386
@@ -174,6 +175,7 @@ BuildRequires: tree vim-enhanced less findutils
 %package wallet
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol (desktop reference client)
 # https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
+Requires: qt5-qtquickcontrols qt5-qtquickcontrols2
 Requires: firewalld-filesystem
 Requires(post): firewalld-filesystem
 Requires(postun): firewalld-filesystem
@@ -225,7 +227,7 @@ Requires: openssl-libs
 %description
 BEAM reference implementation. This is the source package for building
 most of the Beam set of binary packages.  It will build
-beam-{wallet,wallet-cli,node,debuginfo}.
+BeamWallet, and beam-{wallet,node,api,miner-client,debuginfo}.
 
 BEAM is a next generation confidential cryptocurrency based on an elegant and
 innovative Mimblewimble protocol. 
@@ -410,26 +412,51 @@ install -d %{buildroot}%{_sysconfdir}/sysconfig/beam-node-scripts
 
 # GUI wallet
 # ...bins
-cp %{srccodetree}/ui/BeamWallet %{buildroot}%{_bindir}/beam-wallet
-install -m755  %{srccontribtree}/linux/desktop/beam-wallet.wrapper.sh %{buildroot}%{_bindir}/
-# ...config and desktop xml stuff
-cp %{srccodetree}/ui/beam-wallet.cfg %{buildroot}%{_sysconfdir}/beam/beam-wallet.cfg
-desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{srccontribtree}/linux/desktop/beam-wallet.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/beam-wallet.desktop
-install -D -m644 -p %{srccontribtree}/linux/desktop/beam-wallet.appdata.xml %{buildroot}%{_metainfodir}/beam-wallet.appdata.xml
+#cp %%{srccodetree}/ui/BeamWallet %%{buildroot}%%{_bindir}/beam-wallet
+cp %{srccodetree}/ui/BeamWallet %{buildroot}%{_bindir}/
+install -m755  %{srccontribtree}/linux/desktop/BeamWallet.wrapper.sh %{buildroot}%{_bindir}/
+# ...config and desktop xml stuff - the beam-team wants the beam-wallet-cfg in the /usr/bin/dir !?!
+#install -D -m644 %%{srccodetree}/ui/beam-wallet.cfg %%{buildroot}%%{_bindir}/beam-wallet.cfg
+#install -D -m644 %%{srccodetree}/ui/beam-wallet.cfg %%{buildroot}%%{_sharedstatedir}/beam/beam-wallet.cfg.template-desktop
+# the config file is going to become a "document"
+install -D -m644 %{srccodetree}/ui/beam-wallet.cfg %{srccodetree}/ui/beam-wallet.cfg.template-desktop
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{srccontribtree}/linux/desktop/BeamWallet.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/BeamWallet.desktop
+install -D -m644 -p %{srccontribtree}/linux/desktop/BeamWallet.appdata.xml %{buildroot}%{_metainfodir}/BeamWallet.appdata.xml
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
 # ...icons and such
-install -D -m644 %{srccodetree}/ui/beam.png  %{buildroot}%{_datadir}/icons/hicolor/beam.png
-install -D -m644 %{srccodetree}/ui/icon.ico  %{buildroot}%{_datadir}/icons/hicolor/beam.ico
-install -D -m644 %{srccodetree}/ui/view/assets/logo.svg  %{buildroot}%{_datadir}/icons/hicolor/logo.svg
+cd %{srccontribtree}/linux/desktop
+install -D -m644 beam-hicolor-128.png      %{buildroot}%{_datadir}/icons/hicolor/128x128/apps/beam.png
+install -D -m644 beam-hicolor-16.png       %{buildroot}%{_datadir}/icons/hicolor/16x16/apps/beam.png
+install -D -m644 beam-hicolor-22.png       %{buildroot}%{_datadir}/icons/hicolor/22x22/apps/beam.png
+install -D -m644 beam-hicolor-24.png       %{buildroot}%{_datadir}/icons/hicolor/24x24/apps/beam.png
+install -D -m644 beam-hicolor-256.png      %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/beam.png
+install -D -m644 beam-hicolor-32.png       %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/beam.png
+install -D -m644 beam-hicolor-48.png       %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/beam.png
+install -D -m644 beam-hicolor-scalable.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/beam.svg
+# ...todo: HighContrast icons
+#install -D -m644 beam-HighContrast-128.png      %%{buildroot}%%{_datadir}/icons/HighConstrast/128x128/apps/beam.png
+#install -D -m644 beam-HighContrast-16.png       %%{buildroot}%%{_datadir}/icons/HighConstrast/16x16/apps/beam.png
+#install -D -m644 beam-HighContrast-22.png       %%{buildroot}%%{_datadir}/icons/HighConstrast/22x22/apps/beam.png
+#install -D -m644 beam-HighContrast-24.png       %%{buildroot}%%{_datadir}/icons/HighConstrast/24x24/apps/beam.png
+#install -D -m644 beam-HighContrast-256.png      %%{buildroot}%%{_datadir}/icons/HighConstrast/256x256/apps/beam.png
+#install -D -m644 beam-HighContrast-32.png       %%{buildroot}%%{_datadir}/icons/HighConstrast/32x32/apps/beam.png
+#install -D -m644 beam-HighContrast-48.png       %%{buildroot}%%{_datadir}/icons/HighConstrast/48x48/apps/beam.png
+#install -D -m644 beam-HighContrast-scalable.svg %%{buildroot}%%{_datadir}/icons/HighConstrast/scalable/apps/beam.svg
+cd ../../..
 # CLI wallet
-cp %{srccodetree}/wallet/beam-wallet %{buildroot}%{_bindir}/beam-wallet-cli
-cp %{srccodetree}/wallet/beam-wallet.cfg %{buildroot}%{_sysconfdir}/beam/beam-wallet-cli.cfg
+cp %{srccodetree}/wallet/beam-wallet %{buildroot}%{_bindir}/
+#install -D -m644 %%{srccodetree}/wallet/beam-wallet.cfg %%{buildroot}%%{_sharedstatedir}/beam/beam-wallet.cfg.template-cli
+# the config file is going to become a "document"
+install -D -m644 %{srccodetree}/wallet/beam-wallet.cfg %{srccodetree}/wallet/beam-wallet.cfg.template-cli
 # API interface
 cp %{srccodetree}/wallet/wallet-api %{buildroot}%{_bindir}/beam-wallet-api
 # node
 cp %{srccodetree}/beam/beam-node %{buildroot}%{_bindir}/
-cp %{srccodetree}/beam/beam-node.cfg %{buildroot}%{_sysconfdir}/beam/
+#install -D -m644 %%{srccodetree}/beam/beam-node.cfg %%{buildroot}%%{_bindir}/beam-node.cfg
+#install -D -m644 %%{srccodetree}/beam/beam-node.cfg %%{buildroot}%%{_sharedstatedir}/beam/beam-node.cfg.template
+# the config file is going to become a "document"
+install -D -m644 %{srccodetree}/beam/beam-node.cfg %{srccodetree}/beam/beam-node.cfg.template
 # explorer node
 cp %{srccodetree}/explorer/explorer-node %{buildroot}%{_bindir}/beam-explorer-node
 # miner client
@@ -451,7 +478,7 @@ cp %{srccodetree}/pow/miner_client %{buildroot}%{_bindir}/beam-miner-client
 
 # Log files
 # ...logrotate file rules
-#install -D -m644 -p %%{srccontribtree}/linux/logrotate/etc-logrotate.d_dashcore %%{buildroot}/etc/logrotate.d/dashcore
+#install -D -m644 -p %%{srccontribtree}/linux/logrotate/etc-logrotate.d_beam %%{buildroot}/etc/logrotate.d/beam
 # ...ghosted log files - need to exist in the installed buildroot
 touch %{buildroot}%{_localstatedir}/log/beam/debug.log
 
@@ -494,27 +521,28 @@ getent passwd beamuser >/dev/null || useradd -r -g beamuser -d %{_sharedstatedir
 # Notes:
 #  _localstatedir is /var
 #  _sharedstatedir is /var/lib
-#  /var/lib/dashcore is the $HOME for the dashcore user
+#  /var/lib/beam is the $HOME for the beamuser user
 
-# Fix the debug.log directory structure if it is not aligned to /var/log/
-# standards.
-# If /var/lib/beam/debug.log is not a symlink, we need to fix that.
-#    /var/lib/beam/debug.log -> /var/log/dashcore/debug.log
-%define vlibb %{_sharedstatedir}/beam
-%define vlibb_dl %{vlibb}/debug.log
-%define vlogb %{_localstatedir}/log/beam
-%define vlogb_dl %{vlogb}/debug.log
-# If either debug.log in /var/lib/beam is not a symlink, we need to move
-# files and then fix the symlinks Hopefully this doesn't break because
-# beam may have debug.log open
-if [ -e %{vlibb_dl} -a -f %{vlibb_dl} -a ! -h %{vlibb_dl} ]
-then
-   mv %{vlibb_dl}* %{vlogb}/
-   ln -s %{vlogb_dl} %{vlibb_dl}
-   chown beamuser:beamuser %{vlibb_dl}
-   chown -R beamuser:beamuser %{vlogb}
-   chmod 644 %{vlogb_dl}*
-fi
+#t0dd: DEBUG IS DIFFERENT FOR BEAM (versus dash)
+## Fix the debug.log directory structure if it is not aligned to /var/log/
+## standards.
+## If /var/lib/beam/debug.log is not a symlink, we need to fix that.
+##    /var/lib/beam/debug.log -> /var/log/beam/debug.log
+#%%define vlibb %%{_sharedstatedir}/beam
+#%%define vlibb_dl %%{vlibb}/debug.log
+#%%define vlogb %%{_localstatedir}/log/beam
+#%%define vlogb_dl %%{vlogb}/debug.log
+## If either debug.log in /var/lib/beam is not a symlink, we need to move
+## files and then fix the symlinks Hopefully this doesn't break because
+## beam may have debug.log open
+#if [ -e %%{vlibb_dl} -a -f %%{vlibb_dl} -a ! -h %%{vlibb_dl} ]
+#then
+#   mv %%{vlibb_dl}* %%{vlogb}/
+#   ln -s %%{vlogb_dl} %%{vlibb_dl}
+#   chown beamuser:beamuser %%{vlibb_dl}
+#   chown -R beamuser:beamuser %%{vlogb}
+#   chmod 644 %%{vlogb_dl}*
+#fi
 
 exit 0
 
@@ -554,26 +582,24 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %files wallet
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
+%doc %{srccodetree}/ui/beam-wallet.cfg.template-desktop
+%doc %{srccodetree}/wallet/beam-wallet.cfg.template-cli
+%{_bindir}/BeamWallet
+%{_bindir}/BeamWallet.wrapper.sh
 %{_bindir}/beam-wallet
-%{_bindir}/beam-wallet.wrapper.sh
-%{_bindir}/beam-wallet-cli
 %{_bindir}/beam-wallet-api
-%{_datadir}/applications/beam-wallet.desktop
-%{_metainfodir}/beam-wallet.appdata.xml
+%{_datadir}/applications/BeamWallet.desktop
+%{_metainfodir}/BeamWallet.appdata.xml
 %{_datadir}/icons/*
 #%%{_usr_lib}/firewalld/services/dashcore.xml
-#%%{_usr_lib}/firewalld/services/dashcore-testnet.xml
 #%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
-#%%{_usr_lib}/firewalld/services/dashcore-testnet-rpc.xml
-%dir %attr(750,beamuser,beamuser) %{_sysconfdir}/beam
-%config(noreplace) %attr(640,beamuser,beamuser) %{_sysconfdir}/beam/beam-wallet.cfg
-%config(noreplace) %attr(640,beamuser,beamuser) %{_sysconfdir}/beam/beam-wallet-cli.cfg
 
 
 # beam-node
 %files node
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
+%doc %{srccodetree}/beam/beam-node.cfg.template
 
 # Application as systemd service directory structure
 %defattr(-,beamuser,beamuser,-)
@@ -596,15 +622,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %ghost %{_localstatedir}/log/beam/debug.log
 %defattr(-,root,root,-)
 
-# conf
-%dir %attr(750,beamuser,beamuser) %{_sysconfdir}/beam
-%config(noreplace) %attr(640,beamuser,beamuser) %{_sysconfdir}/beam/beam-node.cfg
-
 #%%{_unitdir}/beam-node.service
 #%%{_usr_lib}/firewalld/services/dashcore.xml
-#%%{_usr_lib}/firewalld/services/dashcore-testnet.xml
 #%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
-#%%{_usr_lib}/firewalld/services/dashcore-testnet-rpc.xml
 %{_bindir}/beam-node
 %{_bindir}/beam-miner-client
 %{_bindir}/beam-explorer-node
@@ -661,5 +681,17 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW/beam
 
 %changelog
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.4.testing.taw
+  - made shipped beam-wallet.cfg and beam-node.cfg files "templates" and  
+    organized as docs
+  - fixed license label. Apache-2.0 instead of ASL 2.0 -- there is  
+    discrepancy in the RPM documentation
+
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.3.testing.taw
+  - qt5-qtquickcontrols and qt5-qtquickcontrols2 added to Requires
+
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.2.testing.taw
+  - Added desktop icons
+
 * Sun Jan 06 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.1.testing.taw
   - Initial build

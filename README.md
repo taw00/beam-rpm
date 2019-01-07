@@ -27,7 +27,7 @@ At the terminal command line...
 ```bash
 # My system is Fedora...
 sudo rpm --import https://keybase.io/toddwarner/key.asc
-sudo dnf install -y https://raw.githubusercontent.com/taw00/beam-rpm/master/toddpkgs-beam-repo.fedora.rpm
+sudo dnf install -y https://raw.githubusercontent.com/taw00/beam-rpm/master/toddpkgs-beam-repo.fedora.testing.rpm
 sudo dnf install -y beam-wallet --refresh
 beam-wallet
 ```
