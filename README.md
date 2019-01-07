@@ -18,7 +18,7 @@ See also: <https://www.beam.mw/>,
 separately in COPR. Access to the Beam package repositories is provided by repo
 RPM whose installation is demonstated below.
 
-## *"TL;DR ...I just want to install the Beam GUI Wallet!"*
+## *"TL;DR ...I just want to install the Beam Desktop Wallet!"*
 
 ```bash
 # My system is Fedora...
