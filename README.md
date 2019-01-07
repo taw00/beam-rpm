@@ -78,7 +78,7 @@ been filed on this point: <https://github.com/BeamMW/beam-docs/issues/2>
 ## Disclaimers!
 
 **Disclaimer1:** Please note that these builds have not been endorsed by the
-Beam Team. I have a reputation though from building (Dash RPMs)[https://github.com/taw00/dashcore-rpm]
+Beam Team. I have a reputation though from building [Dash RPMs](https://github.com/taw00/dashcore-rpm)
 for years and years that have been semi-officially-blessed by that team. So
 take that for what it is worth. That being said, proceed with caution and as
 always... Trust no one. At least be suspicious of everyone. :)
