@@ -43,10 +43,15 @@ READ THE DOCS! <https://beam-docs.readthedocs.io/en/latest/rtd_pages/user_deskto
 
 &nbsp;
 
-## Disclaimer!
+## Disclaimers!
 
-These packages have been successfully built and tested, but I lay no claim that
-they are absolutely free of any bugs in the code, default configuration,
+[1] Please note that these builds have not been endorsed by the Beam Team. I
+have a reputation though in building Dash RPMs for years and years that have
+been blessed by that team. That being said, proceed with caution and as
+always... Trust no one. At least, be suspicious of everyone. :)
+
+[2] These packages have been successfully built and tested, but I lay no claim
+that they are absolutely free of any bugs in the code, default configuration,
 documented configuration, or in the builds or how those builds are
 deployed/installed.
 
