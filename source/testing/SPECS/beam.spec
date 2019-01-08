@@ -176,7 +176,7 @@ BuildRequires: tree vim-enhanced less findutils
 # beam-wallet-desktop
 %package wallet-desktop
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol (desktop reference client)
-# beam-wallet --> beam-wallet-desktop as of -0.5 -- sadly, that 0.5 is not honored by the Provides and Obsoletes :(
+# beam-wallet --> beam-wallet-desktop as of -0.5 -- sadly, that 0.5 does not seem to be honored by the Provides and Obsoletes :(
 Provides: beam-wallet = 1.0.3967-0.5
 Obsoletes: beam-wallet < 1.0.3967-0.5
 Requires: beam-wallet-api = %{version}-%{release}
