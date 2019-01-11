@@ -1,0 +1,31 @@
+This was announced on Beam's community discord on Jan 10, 2018. A warning
+concerning use of Beam core' (the reference client's) wallet software.
+
+"""
+@everyone WHAT NOT TO DO WITH BEAM WALLET (UPDATED)
+(short guidelines on how to avoid many many problems)
+
+The following instructions apply to Beam private users and organizations such
+as pools and exchanges.
+
+1. DO NOT run several wallet processes on the same wallet.db file EVER. 
+
+2. Do not do listen and send at the same time using CLI wallet (even from two
+   shells)
+
+3. Do not copy the wallet.db to another machine and run another wallet
+   simultaneously
+
+4. Do not run two different wallets with the same seed at the same time
+
+5. SBBS messages sent between wallets expire after 12 hours. You have to
+   connect within 12 hours of the transaction initiation to receive or send
+   the funds.
+
+6. SBBS Addresses by default expire after 24 hours. Always use 'never'
+   expiring addresses with pools and exchanges to make sure you receive
+   payments.
+
+CLI Wallet is not built for scale operation. Test your setup carefully to
+avoid problems for you and your users
+"""

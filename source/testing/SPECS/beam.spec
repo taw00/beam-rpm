@@ -50,12 +50,13 @@ Version: %{vermajor}.%{verminor}
 # package release, and potentially extrarel
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.5
+  %define _pkgrel 0.6
 %endif
 
 # MINORBUMP - edit this
-# (for very small or rapid iterations)
-%define minorbump taw
+# builder's initials and often a numeral for very small or rapid iterations
+# taw, taw0, taw1, etc.
+%define minorbump taw0
 
 #
 # Build the release string - don't edit this
@@ -116,9 +117,9 @@ Release: %{_release}
 %endif
 
 # Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               beam-1.0.3967
+#   srcroot               beam-1.0.3976
 #      \_srccodetree        \_beam-mainnet-release
-#      \_srccontribtree     \_beam-1.0.3967-contrib
+#      \_srccontribtree     \_beam-1.0.3976-contrib
 %define srcroot %{name}-%{vermajor}
 %define srccontribtree %{name}-%{vermajor}-contrib
 # srccodetree defined earlier
@@ -176,9 +177,9 @@ BuildRequires: tree vim-enhanced less findutils
 # beam-wallet-desktop
 %package wallet-desktop
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol (desktop reference client)
-# beam-wallet --> beam-wallet-desktop as of -0.5 -- sadly, that 0.5 does not seem to be honored by the Provides and Obsoletes :(
-Provides: beam-wallet = 1.0.3967-0.5
-Obsoletes: beam-wallet < 1.0.3967-0.5
+# beam-wallet --> beam-wallet-desktop as of 1.0.3976-0.5
+Provides: beam-wallet = 1.0.3976-0.5
+Obsoletes: beam-wallet < 1.0.3976-0.5
 Requires: beam-wallet-api = %{version}-%{release}
 Requires: qt5-qtquickcontrols qt5-qtquickcontrols2
 # https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
@@ -299,12 +300,12 @@ Learn more at www.beam.mw
 
 mkdir -p %{srcroot}
 # beam
-# {_builddir}/beam-1.0.3967/beam-mainnet-release/
+# {_builddir}/beam-1.0.3976/beam-mainnet-release/
 # ..or something like..
-# {_builddir}/beam-1.0.3967/beam-testnet4-release/
+# {_builddir}/beam-1.0.3976/beam-testnet4-release/
 %setup -q -T -D -a 0 -n %{srcroot}
 # contributions
-# {_builddir}/beam-1.0.3967/beam-1.0-contrib/
+# {_builddir}/beam-1.0.3976/beam-1.0-contrib/
 %setup -q -T -D -a 1 -n %{srcroot}
 # patches
 #%%patch0 -p0
@@ -495,6 +496,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
 %doc %{srccodetree}/ui/beam-wallet.cfg.template-desktop
+%doc %{srccontribtree}/USAGE-WARNING.txt
 %{_bindir}/BeamWallet
 %{_bindir}/BeamWallet.wrapper.sh
 %{_datadir}/applications/BeamWallet.desktop
@@ -508,6 +510,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
 %doc %{srccodetree}/wallet/beam-wallet.cfg.template-cli
+%doc %{srccontribtree}/USAGE-WARNING.txt
 %{_bindir}/beam-wallet
 %{_bindir}/beam-wallet-api
 #%%{_usr_lib}/firewalld/services/dashcore.xml
@@ -566,24 +569,27 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
-* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.5.testing.taw
+* Thu Jan 10 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.6.testing.taw
+  - Added README.USAGE.WARNING.txt
+
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.5.testing.taw
   - MUCH cleanup
   - Split out beam-wallet-cli and beam-wallet-api packages
   - Renamed package: beam-wallet --> beam-wallet-desktop
   - Removed reference to /var/log/debug since we'll never probably use it
   - Removed reference to /etc/beam since we'll never probably use it
 
-* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.4.testing.taw
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.4.testing.taw
   - shipped beam-wallet.cfg and beam-node.cfg files are "templates" and  
     organized as docs
   - fixed license label. Apache-2.0 instead of ASL 2.0 -- there is  
     discrepancy in the RPM documentation
 
-* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.3.testing.taw
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.3.testing.taw
   - qt5-qtquickcontrols and qt5-qtquickcontrols2 added to Requires
 
-* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.2.testing.taw
+* Mon Jan 07 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.2.testing.taw
   - Added desktop icons
 
-* Sun Jan 06 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3967-0.1.testing.taw
+* Sun Jan 06 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.1.testing.taw
   - Initial build
