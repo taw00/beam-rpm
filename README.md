@@ -3,6 +3,17 @@
 _"BEAM is a next generation confidential cryptocurrency based on an elegant and
 innovative Mimblewimble protocol."_
 
+> ***DON'T USE THIS WALLET (yet)***<br />
+> There was a [critical vulnerability
+> found](https://medium.com/beam-mw/team-beam-discovered-a-critical-vulnerability-in-beam-wallet-658f2c0344e2)
+> and only binaries from <https://beam.mw/downloads> are currently suggested. I
+> personally use my own builds but strictly follow the README instructions
+> found here:
+> <https://github.com/taw00/beam-rpm/blob/master/source/testing/SOURCES/beam-1.0-contrib/USAGE-WARNING.txt>.
+> Until the fix lands in the public source, and if you are concerned, I would
+> recommend sticking to the official project builds. If you like taking a
+> smidge of risk, use my builds for now, but note that you have been warned. :)
+
 This github repository is used to develop and maintain packages that make
 installing and updating Beam on Fedora Linux[1] native to the platform, more
 consistent, less error-prone, and more complete. These builds are not officially
