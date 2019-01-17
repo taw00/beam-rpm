@@ -3,7 +3,7 @@
 _"BEAM is a next generation confidential cryptocurrency based on an elegant and
 innovative Mimblewimble protocol."_
 
-> ***DON'T USE THIS WALLET (yet)***<br />
+> ***DON'T USE THIS WALLET (yet)***  
 > There was a [critical vulnerability
 > found](https://medium.com/beam-mw/team-beam-discovered-a-critical-vulnerability-in-beam-wallet-658f2c0344e2)
 > and only binaries from <https://beam.mw/downloads> are currently suggested. I

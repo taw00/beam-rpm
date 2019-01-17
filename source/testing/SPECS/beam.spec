@@ -32,6 +32,7 @@
 # <name>-<vermajor.<verminor>-<pkgrel>[.<extraver>][.<snapinfo>].DIST[.<minorbump>]
 
 Name: beam
+%define codename agile-atom
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol
 
 %define targetIsProduction 0
@@ -42,21 +43,21 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 %define includeArchiveQualifier 0
 
 # VERSION - edit this
-%define vermajor 1.0
-%define verminor 3976
+%define vermajor 1.1
+%define verminor 4194
 Version: %{vermajor}.%{verminor}
 
 # RELEASE - edit this
 # package release, and potentially extrarel
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.6
+  %define _pkgrel 0.1
 %endif
 
 # MINORBUMP - edit this
 # builder's initials and often a numeral for very small or rapid iterations
 # taw, taw0, taw1, etc.
-%define minorbump taw0
+%define minorbump taw
 
 #
 # Build the release string - don't edit this
@@ -94,19 +95,18 @@ Release: %{_release}
 # ----------- end of release building section
 
 # beam source tarball file basename
+# Okay, beam officially has crazy archive names ;)
 # the archive name and directory tree can have some variances
-# v1.0.3976.tar.gz
+# example: v1.1.4194.tar.gz
 %define _archivename_alt1 v%{version}
-# beam-1.0.3976.tar.gz
+# example: beam-1.1.4194.tar.gz
 %define _archivename_alt2 %{name}-%{version}
-# mainnet-release.tar.gz
-%define _archivename_alt3 mainnet-release
-# beam-mainnet-release.tar.gz
-%define _archivename_alt4 %{name}-mainnet-release
+# example: beam-agile-atom-1.1.4194.tar.gz
+%define _archivename_alt3 %{name}-%{codename}-%{version}
 
 # our selection for this build - edit this
-%define _archivename %{_archivename_alt4}
-%define _srccodetree %{_archivename_alt4}
+%define _archivename %{_archivename_alt3}
+%define _srccodetree %{_archivename_alt3}
 
 %if %{includeArchiveQualifier}
   %define archivename %{_archivename}-%{archiveQualifier}
@@ -117,21 +117,22 @@ Release: %{_release}
 %endif
 
 # Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               beam-1.0.3976
-#      \_srccodetree        \_beam-mainnet-release
-#      \_srccontribtree     \_beam-1.0.3976-contrib
+#   srcroot               beam-{vermajor}
+#      \_srccodetree        \_beam-{codename}-{version}
+#      \_srccontribtree     \_beam-{vermajor}-contrib
 %define srcroot %{name}-%{vermajor}
-%define srccontribtree %{name}-%{vermajor}-contrib
+#%%define srccontribtree %%{name}-%{vermajor}-contrib
+%define srccontribtree %{name}-1.0-contrib
 # srccodetree defined earlier
 
 # Note, that ...
-# https://github.com/BeamMW/beam/archive/mainnet-release.tar.gz
+# https://github.com/BeamMW/beam/archive/{codename}-{version}.tar.gz
 # ...is the same as...
-# https://github.com/BeamMW/beam/archive/mainnet-release/beam-mainnet-release.tar.gz
+# https://github.com/BeamMW/beam/archive/{codename}-{version}/beam-{codename}-{version}.tar.gz
 %if %{includeArchiveQualifier}
-Source0: https://github.com/BeamMW/beam/archive/v%{version}-%{archiveQualifier}/%{archivename}.tar.gz
+Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}-%{archiveQualifier}/%{archivename}.tar.gz
 %else
-Source0: https://github.com/BeamMW/beam/archive/v%{version}/%{archivename}.tar.gz
+Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}/%{archivename}.tar.gz
 %endif
 Source1: https://github.com/taw00/beam-rpm/blob/master/source/testing/SOURCES/%{srccontribtree}.tar.gz
 
@@ -308,7 +309,9 @@ mkdir -p %{srcroot}
 # {_builddir}/beam-1.0.3976/beam-1.0-contrib/
 %setup -q -T -D -a 1 -n %{srcroot}
 # patches
-#%%patch0 -p0
+#cd %%{srccodetree}
+#%%patch0 -p1
+#cd ..
 
 
 %build
@@ -327,11 +330,6 @@ cd %{srccodetree}
 
 %install
 # This section starts us in directory {_builddir}/{srcroot}
-
-#cd %%{srccodetree}
-#make INSTALL="install -p" CP="cp -p" DESTDIR=%%{buildroot} install
-#make install
-#cd ..
 
 # Cheatsheet for built-in RPM macros:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/RPMMacros/
@@ -380,6 +378,7 @@ install -d -m750 -p %{buildroot}%{_sharedstatedir}/beam
 # ...bins
 cp %{srccodetree}/ui/BeamWallet %{buildroot}%{_bindir}/
 install -m755  %{srccontribtree}/linux/desktop/BeamWallet.wrapper.sh %{buildroot}%{_bindir}/
+ln -s %{_bindir}/BeamWallet.wrapper.sh %{buildroot}%{_bindir}/beam-wallet-desktop
 # ...config and desktop xml stuff - the shipped config file becomes a "document"
 install -D -m644 %{srccodetree}/ui/beam-wallet.cfg %{srccodetree}/ui/beam-wallet.cfg.template-desktop
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{srccontribtree}/linux/desktop/BeamWallet.desktop
@@ -408,6 +407,7 @@ install -D -m644 beam-hicolor-scalable.svg %{buildroot}%{_datadir}/icons/hicolor
 cd ../../..
 # CLI wallet
 cp %{srccodetree}/wallet/beam-wallet %{buildroot}%{_bindir}/
+ln -s %{_bindir}/beam-wallet %{buildroot}%{_bindir}/beam-wallet-cli
 # ...the shipped config file becomes a "document"
 install -D -m644 %{srccodetree}/wallet/beam-wallet.cfg %{srccodetree}/wallet/beam-wallet.cfg.template-cli
 # API interface
@@ -499,6 +499,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %doc %{srccontribtree}/USAGE-WARNING.txt
 %{_bindir}/BeamWallet
 %{_bindir}/BeamWallet.wrapper.sh
+%{_bindir}/beam-wallet-desktop
 %{_datadir}/applications/BeamWallet.desktop
 %{_metainfodir}/BeamWallet.appdata.xml
 %{_datadir}/icons/*
@@ -512,6 +513,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %doc %{srccodetree}/wallet/beam-wallet.cfg.template-cli
 %doc %{srccontribtree}/USAGE-WARNING.txt
 %{_bindir}/beam-wallet
+%{_bindir}/beam-wallet-cli
 %{_bindir}/beam-wallet-api
 #%%{_usr_lib}/firewalld/services/dashcore.xml
 #%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
@@ -569,6 +571,16 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Thu Jan 17 2019 Todd Warner <t0dd_at_protonmail.com> 1.1.4194-0.1.testing.taw
+  - codename-version: agile-atom-1.1.4194
+  - team is adding codenames... just lovely</sarcasm>
+
+* Fri Jan 11 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.7.testing.taw
+  - Added beam-wallet-desktop and beam-wallet-cli symlinks to use as  
+    alternative executables IMHO, "BeamWallet" as a command is just horrid  
+    and "beam-wallet" as the commandline app executable just adds to the  
+    inconsistency.
+
 * Thu Jan 10 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.3976-0.6.testing.taw
   - Added README.USAGE.WARNING.txt
 
