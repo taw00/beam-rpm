@@ -3,17 +3,6 @@
 _"BEAM is a next generation confidential cryptocurrency based on an elegant and
 innovative Mimblewimble protocol."_
 
-> ***DON'T USE THIS WALLET (yet)***  
-> There was a [critical vulnerability
-> found](https://medium.com/beam-mw/team-beam-discovered-a-critical-vulnerability-in-beam-wallet-658f2c0344e2)
-> and only binaries from <https://beam.mw/downloads> are currently suggested. I
-> personally use my own builds but strictly follow the README instructions
-> found here:
-> <https://github.com/taw00/beam-rpm/blob/master/source/testing/SOURCES/beam-1.0-contrib/USAGE-WARNING.txt>.
-> Until the fix lands in the public source, and if you are concerned, I would
-> recommend sticking to the official project builds. If you like taking a
-> smidge of risk, use my builds for now, but note that you have been warned. :)
-
 This github repository is used to develop and maintain packages that make
 installing and updating Beam on Fedora Linux[1] native to the platform, more
 consistent, less error-prone, and more complete. These builds are not officially
@@ -115,10 +104,13 @@ loss of funds or damages associated to this software.
 to me on one of the various forums or chat platforms. I am t0dd or taw in most
 places.
 
-If you like my Beam stuff, also check out my
-[Dash](https://github.com/taw00/dashcore-rpm) (mature) and
-[Zcash](https://github.com/taw00/zcash-rpm) (more experimental) builds. I am a
-fan of all of these endeavors.  Don't troll me. :)
+Check out all my crypto-oriented RPM builds:
+- Dash (my longest running and tested builds): <https://github.com/taw00/dashcore-rpm>
+- Electrum-Dash (somewhat experimental): <https://github.com/taw00/electrum-dash-rpm>
+- ZCash: <https://github.com/taw00/dashcore-rpm>
+- Beam: <https://github.com/taw00/beam-rpm>
+- Grin: <https://github.com/taw00/grin-rpm>
+- IPFS (somewhat experimental): <https://github.com/taw00/ipfs-rpm>
 
 ---
 [1] _Note: Only Fedora is being targeted for builds at this time. CentOS and
