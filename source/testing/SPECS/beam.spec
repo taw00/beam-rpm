@@ -43,8 +43,8 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 %define includeArchiveQualifier 0
 
 # VERSION - edit this
-%define vermajor 1.1
-%define verminor 4202
+%define vermajor 1.2
+%define verminor 4419
 Version: %{vermajor}.%{verminor}
 
 # RELEASE - edit this
@@ -106,8 +106,8 @@ Release: %{_release}
 %define _archivename_alt4 %{name}-%{codename}-%{verminor}
 
 # our selection for this build - edit this
-%define _archivename %{_archivename_alt4}
-%define _srccodetree %{_archivename_alt4}
+%define _archivename %{_archivename_alt3}
+%define _srccodetree %{_archivename_alt3}
 
 %if %{includeArchiveQualifier}
   %define archivename %{_archivename}-%{archiveQualifier}
@@ -119,10 +119,10 @@ Release: %{_release}
 
 # Extracted source tree structure (extracted in .../BUILD)
 #   srcroot               beam-{vermajor}
-#      \_srccodetree        \_beam-{codename}-{verminor}
+#      \_srccodetree        \_beam-{codename}-{version}
 #      \_srccontribtree     \_beam-{vermajor}-contrib
 %define srcroot %{name}-%{vermajor}
-#%%define srccontribtree %%{name}-%{vermajor}-contrib
+#%%define srccontribtree %%{name}-%%{vermajor}-contrib
 %define srccontribtree %{name}-1.0-contrib
 # srccodetree defined earlier
 
@@ -572,6 +572,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Wed Feb 13 2019 Todd Warner <t0dd_at_protonmail.com> 1.2.4419-0.1.testing.taw
+  - v1.2.4419 -- aka agile-atom-4419
+
 * Tue Jan 22 2019 Todd Warner <t0dd_at_protonmail.com> 1.1.4202-0.1.testing.taw
   - v1.1.4202 -- aka agile-atom-4202
   - beam team release team has no consistency.
