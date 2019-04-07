@@ -32,51 +32,58 @@
 # <name>-<vermajor.<verminor>-<pkgrel>[.<extraver>][.<snapinfo>].DIST[.<minorbump>]
 
 Name: beam
-%define codename agile-atom
+%define codename bright_boson
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol
 
 %define targetIsProduction 0
+# don't attempt to use this next flag yet
+%define sourceIsBinary 0
 
-# ARCHIVE QUALIFIER - edit this if applies
-# ie. if the dev team includes things like rc3 in the filename
-%define archiveQualifier rc1
-%define includeArchiveQualifier 0
+# ie. if the dev team includes things like rc1 or a date in the source filename
+%define buildQualifier rc1
+%undefine buildQualifier
 
-# VERSION - edit this
-%define vermajor 1.2
-%define verminor 4421
+
+# VERSION
+%define vermajor 2.0
+%define verminor 4739
 Version: %{vermajor}.%{verminor}
 
-# RELEASE - edit this
-# package release, and potentially extrarel
+# RELEASE
 %define _pkgrel 1
 %if ! %{targetIsProduction}
   %define _pkgrel 0.1
 %endif
 
-# MINORBUMP - edit this
-# builder's initials and often a numeral for very small or rapid iterations
-# taw, taw0, taw1, etc.
+# MINORBUMP
 %define minorbump taw
 
 #
 # Build the release string - don't edit this
 #
 
-%define snapinfo testing
-%if %{includeArchiveQualifier}
-  %define snapinfo %{archiveQualifier}
-  %if %{targetIsProduction}
+# -- snapinfo
+%define _snapinfo testing
+%define _repackaged rp
+%undefine snapinfo
+
+%if %{targetIsProduction}
+  %if %{sourceIsBinary}
+    %define snapinfo %{_repackaged}
+  %else
     %undefine snapinfo
+  %endif
+%else
+  %if %{sourceIsBinary}
+    %define snapinfo %{_snapinfo}.%{_repackaged}
+  %else
+    %define snapinfo %{_snapinfo}
   %endif
 %endif
 
-# pkgrel will be defined, snapinfo and minorbump may not be
+# -- _release
+# pkgrel will always be defined, snapinfo and minorbump may not be
 %define _release %{_pkgrel}
-%define includeMinorbump 1
-%if ! %{includeMinorbump}
-  %undefine minorbump
-%endif
 %if 0%{?snapinfo:1}
   %if 0%{?minorbump:1}
     %define _release %{_pkgrel}.%{snapinfo}%{?dist}.%{minorbump}
@@ -94,6 +101,11 @@ Version: %{vermajor}.%{verminor}
 Release: %{_release}
 # ----------- end of release building section
 
+# Tree structure (in .../BUILD):
+#   projectroot               beam-{vermajor}
+#      \_sourcetree             \_beam-{version}
+#      \_sourcetree_contrib     \_beam-{vermajor}-contrib
+
 # beam source tarball file basename
 # Whoever is doing the beam releases has no consistency...
 # example: v1.1.4194.tar.gz
@@ -102,40 +114,35 @@ Release: %{_release}
 %define _archivename_alt2 %{name}-%{version}
 # example: beam-agile-atom-1.1.4194.tar.gz
 %define _archivename_alt3 %{name}-%{codename}-%{version}
-# example: beam-agile-atom-4202.tar.gz
-%define _archivename_alt4 %{name}-%{codename}-%{verminor}
+# example: beam-bright_boson_2.0.tar.gz
+%define _archivename_alt4 %{name}-%{codename}_%{vermajor}
 
 # our selection for this build - edit this
-%define _archivename %{_archivename_alt3}
-%define _srccodetree %{_archivename_alt3}
+%define _archivename %{_archivename_alt4}
+%define _sourcetree %{_archivename_alt2}
 
-%if %{includeArchiveQualifier}
-  %define archivename %{_archivename}-%{archiveQualifier}
-  %define srccodetree %{_srccodetree}-%{archiveQualifier}
+%if 0%{?buildQualifier:1}
+  %define archivename %{_archivename}-%{buildQualifier}
+  %define sourcetree %{_sourcetree}-%{buildQualifier}
 %else
   %define archivename %{_archivename}
-  %define srccodetree %{_srccodetree}
+  %define sourcetree %{_sourcetree}
 %endif
 
-# Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               beam-{vermajor}
-#      \_srccodetree        \_beam-{codename}-{version}
-#      \_srccontribtree     \_beam-{vermajor}-contrib
-%define srcroot %{name}-%{vermajor}
-#%%define srccontribtree %%{name}-%%{vermajor}-contrib
-%define srccontribtree %{name}-1.0-contrib
-# srccodetree defined earlier
+%define projectroot %{name}-%{vermajor}
+%define sourcetree_contrib %{name}-%{vermajor}-contrib
+# sourcetree defined earlier
 
 # Note, that ...
 # https://github.com/BeamMW/beam/archive/{codename}-{version}.tar.gz
-# ...is the same as...
+# ...is the same as, but with a different filename...
 # https://github.com/BeamMW/beam/archive/{codename}-{version}/beam-{codename}-{version}.tar.gz
-%if %{includeArchiveQualifier}
-Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}-%{archiveQualifier}/%{archivename}.tar.gz
+%if 0%{?buildQualifier:1}
+Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}-%{buildQualifier}/%{archivename}.tar.gz
 %else
 Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}/%{archivename}.tar.gz
 %endif
-Source1: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{srccontribtree}.tar.gz
+Source1: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{sourcetree_contrib}.tar.gz
 
 # If you comment out "debug_package" RPM will create additional RPMs that can
 # be used for debugging purposes. I am not an expert at this, BUT ".build_ids"
@@ -300,37 +307,37 @@ Learn more at www.beam.mw
   exit 1
 %endif
 
-mkdir -p %{srcroot}
+mkdir -p %{projectroot}
 # beam
-# {_builddir}/beam-1.0.3976/beam-mainnet-release/
-# ..or something like..
-# {_builddir}/beam-1.0.3976/beam-testnet4-release/
-%setup -q -T -D -a 0 -n %{srcroot}
+%setup -q -T -D -a 0 -n %{projectroot}
 # contributions
-# {_builddir}/beam-1.0.3976/beam-1.0-contrib/
-%setup -q -T -D -a 1 -n %{srcroot}
-# patches
-#cd %%{srccodetree}
-#%%patch0 -p1
-#cd ..
+%setup -q -T -D -a 1 -n %{projectroot}
+
+# rename from silly beam upstream semantics to normal semantics
+mv %{archivename} %{sourcetree}
+
+# For debugging purposes...
+%if ! %{targetIsProduction}
+cd .. ; tree -df -L 1 %{projectroot} ; cd -
+%endif
 
 
 %build
-# This section starts us in directory {_builddir}/{srcroot}
-cd %{srccodetree}
+# This section starts us in directory {_builddir}/{projectroot}
+cd %{sourcetree}
 cmake -DCMAKE_BUILD_TYPE=Release . && make -j4
 cd ..
 
 
 
 %check
-# This section starts us in directory {_builddir}/{srcroot}
-cd %{srccodetree}
+# This section starts us in directory {_builddir}/{projectroot}
+cd %{sourcetree}
 
 
 
 %install
-# This section starts us in directory {_builddir}/{srcroot}
+# This section starts us in directory {_builddir}/{projectroot}
 
 # Cheatsheet for built-in RPM macros:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/RPMMacros/
@@ -377,17 +384,17 @@ install -d -m750 -p %{buildroot}%{_sharedstatedir}/beam
 
 # GUI wallet
 # ...bins
-cp %{srccodetree}/ui/BeamWallet %{buildroot}%{_bindir}/
-install -m755  %{srccontribtree}/linux/desktop/BeamWallet.wrapper.sh %{buildroot}%{_bindir}/
+cp %{sourcetree}/ui/BeamWallet %{buildroot}%{_bindir}/
+install -m755  %{sourcetree_contrib}/linux/desktop/BeamWallet.wrapper.sh %{buildroot}%{_bindir}/
 ln -s %{_bindir}/BeamWallet.wrapper.sh %{buildroot}%{_bindir}/beam-wallet-desktop
 # ...config and desktop xml stuff - the shipped config file becomes a "document"
-install -D -m644 %{srccodetree}/ui/beam-wallet.cfg %{srccodetree}/ui/beam-wallet.cfg.template-desktop
-desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{srccontribtree}/linux/desktop/BeamWallet.desktop
+install -D -m644 %{sourcetree}/ui/beam-wallet.cfg %{sourcetree}/ui/beam-wallet.cfg.template-desktop
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{sourcetree_contrib}/linux/desktop/BeamWallet.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/BeamWallet.desktop
-install -D -m644 -p %{srccontribtree}/linux/desktop/BeamWallet.appdata.xml %{buildroot}%{_metainfodir}/BeamWallet.appdata.xml
+install -D -m644 -p %{sourcetree_contrib}/linux/desktop/BeamWallet.appdata.xml %{buildroot}%{_metainfodir}/BeamWallet.appdata.xml
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
 # ...icons and such
-cd %{srccontribtree}/linux/desktop
+cd %{sourcetree_contrib}/linux/desktop
 install -D -m644 beam-hicolor-128.png      %{buildroot}%{_datadir}/icons/hicolor/128x128/apps/beam.png
 install -D -m644 beam-hicolor-16.png       %{buildroot}%{_datadir}/icons/hicolor/16x16/apps/beam.png
 install -D -m644 beam-hicolor-22.png       %{buildroot}%{_datadir}/icons/hicolor/22x22/apps/beam.png
@@ -407,32 +414,32 @@ install -D -m644 beam-hicolor-scalable.svg %{buildroot}%{_datadir}/icons/hicolor
 #install -D -m644 beam-HighContrast-scalable.svg %%{buildroot}%%{_datadir}/icons/HighConstrast/scalable/apps/beam.svg
 cd ../../..
 # CLI wallet
-cp %{srccodetree}/wallet/beam-wallet %{buildroot}%{_bindir}/
+cp %{sourcetree}/wallet/beam-wallet %{buildroot}%{_bindir}/
 ln -s %{_bindir}/beam-wallet %{buildroot}%{_bindir}/beam-wallet-cli
 # ...the shipped config file becomes a "document"
-install -D -m644 %{srccodetree}/wallet/beam-wallet.cfg %{srccodetree}/wallet/beam-wallet.cfg.template-cli
+install -D -m644 %{sourcetree}/wallet/beam-wallet.cfg %{sourcetree}/wallet/beam-wallet.cfg.template-cli
 # API interface
-cp %{srccodetree}/wallet/wallet-api %{buildroot}%{_bindir}/beam-wallet-api
+cp %{sourcetree}/wallet/wallet-api %{buildroot}%{_bindir}/beam-wallet-api
 # node
-cp %{srccodetree}/beam/beam-node %{buildroot}%{_bindir}/
+cp %{sourcetree}/beam/beam-node %{buildroot}%{_bindir}/
 # ...the shipped config file becomes a "document"
-install -D -m644 %{srccodetree}/beam/beam-node.cfg %{srccodetree}/beam/beam-node.cfg.template
+install -D -m644 %{sourcetree}/beam/beam-node.cfg %{sourcetree}/beam/beam-node.cfg.template
 # explorer node
-cp %{srccodetree}/explorer/explorer-node %{buildroot}%{_bindir}/beam-explorer-node
+cp %{sourcetree}/explorer/explorer-node %{buildroot}%{_bindir}/beam-explorer-node
 # miner client
-cp %{srccodetree}/pow/miner_client %{buildroot}%{_bindir}/beam-miner-client
+cp %{sourcetree}/pow/miner_client %{buildroot}%{_bindir}/beam-miner-client
 
 ## System services
-#install -D -m600 -p %%{srccontribtree}/linux/systemd/etc-sysconfig_beam-node %%{buildroot}%%{_sysconfdir}/sysconfig/beam-node
-#install -D -m755 -p %%{srccontribtree}/linux/systemd/etc-sysconfig-beam-node-scripts_beam-node.send-email.sh %%{buildroot}%%{_sysconfdir}/sysconfig/beam-node-scripts/beam-node.send-email.sh
-#install -D -m644 -p %%{srccontribtree}/linux/systemd/usr-lib-systemd-system_beam-node.service %%{buildroot}%%{_unitdir}/beam-node.service
-#install -D -m644 -p %%{srccontribtree}/linux/systemd/usr-lib-tmpfiles.d_beam-node.conf %%{buildroot}%%{_tmpfilesdir}/beam-node.conf
+#install -D -m600 -p %%{sourcetree_contrib}/linux/systemd/etc-sysconfig_beam-node %%{buildroot}%%{_sysconfdir}/sysconfig/beam-node
+#install -D -m755 -p %%{sourcetree_contrib}/linux/systemd/etc-sysconfig-beam-node-scripts_beam-node.send-email.sh %%{buildroot}%%{_sysconfdir}/sysconfig/beam-node-scripts/beam-node.send-email.sh
+#install -D -m644 -p %%{sourcetree_contrib}/linux/systemd/usr-lib-systemd-system_beam-node.service %%{buildroot}%%{_unitdir}/beam-node.service
+#install -D -m644 -p %%{sourcetree_contrib}/linux/systemd/usr-lib-tmpfiles.d_beam-node.conf %%{buildroot}%%{_tmpfilesdir}/beam-node.conf
 
 ## Service definition files for firewalld for full and master nodes
-#install -D -m644 -p %%{srccontribtree}/linux/firewalld/usr-lib-firewalld-services_dashcore.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore.xml
-#install -D -m644 -p %%{srccontribtree}/linux/firewalld/usr-lib-firewalld-services_dashcore-testnet.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore-testnet.xml
-#install -D -m644 -p %%{srccontribtree}/linux/firewalld/usr-lib-firewalld-services_dashcore-rpc.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
-#install -D -m644 -p %%{srccontribtree}/linux/firewalld/usr-lib-firewalld-services_dashcore-testnet-rpc.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore-testnet-rpc.xml
+#install -D -m644 -p %%{sourcetree_contrib}/linux/firewalld/usr-lib-firewalld-services_dashcore.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore.xml
+#install -D -m644 -p %%{sourcetree_contrib}/linux/firewalld/usr-lib-firewalld-services_dashcore-testnet.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore-testnet.xml
+#install -D -m644 -p %%{sourcetree_contrib}/linux/firewalld/usr-lib-firewalld-services_dashcore-rpc.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore-rpc.xml
+#install -D -m644 -p %%{sourcetree_contrib}/linux/firewalld/usr-lib-firewalld-services_dashcore-testnet-rpc.xml %%{buildroot}%%{_usr_lib}/firewalld/services/dashcore-testnet-rpc.xml
 
 
 
@@ -495,9 +502,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 # beam-wallet-desktop
 %files wallet-desktop
 %defattr(-,root,root,-)
-%license %{srccodetree}/LICENSE
-%doc %{srccodetree}/ui/beam-wallet.cfg.template-desktop
-%doc %{srccontribtree}/USAGE-WARNING.txt
+%license %{sourcetree}/LICENSE
+%doc %{sourcetree}/ui/beam-wallet.cfg.template-desktop
+%doc %{sourcetree_contrib}/USAGE-WARNING.txt
 %{_bindir}/BeamWallet
 %{_bindir}/BeamWallet.wrapper.sh
 %{_bindir}/beam-wallet-desktop
@@ -510,9 +517,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 # beam-wallet-cli
 %files wallet-cli
 %defattr(-,root,root,-)
-%license %{srccodetree}/LICENSE
-%doc %{srccodetree}/wallet/beam-wallet.cfg.template-cli
-%doc %{srccontribtree}/USAGE-WARNING.txt
+%license %{sourcetree}/LICENSE
+%doc %{sourcetree}/wallet/beam-wallet.cfg.template-cli
+%doc %{sourcetree_contrib}/USAGE-WARNING.txt
 %{_bindir}/beam-wallet
 %{_bindir}/beam-wallet-cli
 %{_bindir}/beam-wallet-api
@@ -522,15 +529,15 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 # beam-wallet-api
 %files wallet-api
 %defattr(-,root,root,-)
-%license %{srccodetree}/LICENSE
+%license %{sourcetree}/LICENSE
 %{_bindir}/beam-wallet-api
 
 
 # beam-node
 %files node
 %defattr(-,root,root,-)
-%license %{srccodetree}/LICENSE
-%doc %{srccodetree}/beam/beam-node.cfg.template
+%license %{sourcetree}/LICENSE
+%doc %{sourcetree}/beam/beam-node.cfg.template
 %{_bindir}/beam-node
 %{_bindir}/beam-miner-client
 %{_bindir}/beam-explorer-node
@@ -572,14 +579,21 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Sun Apr 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.0.4739-0.1.testing.taw
+  - 2.0.4739
+  - updated spec
+  - [node] New version of node.db is not compatible with previous version.  
+    Before running new standalone node please remove old node.db and  
+    macroblock files manually
+
 * Wed Feb 20 2019 Todd Warner <t0dd_at_protonmail.com> 1.2.4421-0.1.testing.taw
-  - v1.2.4421 -- aka agile-atom-4421
+  - 1.2.4421 -- aka agile-atom-4421
 
 * Wed Feb 13 2019 Todd Warner <t0dd_at_protonmail.com> 1.2.4419-0.1.testing.taw
-  - v1.2.4419 -- aka agile-atom-4419
+  - 1.2.4419 -- aka agile-atom-4419
 
 * Tue Jan 22 2019 Todd Warner <t0dd_at_protonmail.com> 1.1.4202-0.1.testing.taw
-  - v1.1.4202 -- aka agile-atom-4202
+  - 1.1.4202 -- aka agile-atom-4202
   - beam team release team has no consistency.
 
 * Thu Jan 17 2019 Todd Warner <t0dd_at_protonmail.com> 1.1.4194-0.1.testing.taw
