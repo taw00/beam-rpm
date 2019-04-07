@@ -135,7 +135,7 @@ Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}-%{archive
 %else
 Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}/%{archivename}.tar.gz
 %endif
-Source1: https://github.com/taw00/beam-rpm/blob/master/source/testing/SOURCES/%{srccontribtree}.tar.gz
+Source1: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{srccontribtree}.tar.gz
 
 # If you comment out "debug_package" RPM will create additional RPMs that can
 # be used for debugging purposes. I am not an expert at this, BUT ".build_ids"
