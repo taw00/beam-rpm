@@ -584,7 +584,8 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
   - updated spec
   - [node] New version of node.db is not compatible with previous version.  
     Before running new standalone node please remove old node.db and  
-    macroblock files manually
+    macroblock files manually:  
+    `cd ~/.local/share/Beam\ Wallet ; rm node.db tempmb* ; cd - `
 
 * Wed Feb 20 2019 Todd Warner <t0dd_at_protonmail.com> 1.2.4421-0.1.testing.taw
   - 1.2.4421 -- aka agile-atom-4421
