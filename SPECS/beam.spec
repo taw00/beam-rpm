@@ -45,8 +45,8 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 
 
 # VERSION
-%define vermajor 2.0
-%define verminor 4739
+%define vermajor 2.1
+%define verminor 4910
 Version: %{vermajor}.%{verminor}
 
 # RELEASE
@@ -579,6 +579,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Tue May 14 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4910-0.1.testing.taw
+  - 2.1.4910
+
 * Sun Apr 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.0.4739-0.1.testing.taw
   - 2.0.4739
   - updated spec
