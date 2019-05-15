@@ -170,6 +170,7 @@ ExclusiveArch: x86_64 i686 i386
 
 # As recommended by...
 # https://github.com/BeamMW/beam/wiki/How-to-build
+BuildRequires: git
 BuildRequires: libtool make autoconf automake patch
 BuildRequires: gcc-c++ >= 7.0 libstdc++-static
 BuildRequires: cmake >= 3.11.0
@@ -581,6 +582,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %changelog
 * Tue May 14 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4910-0.1.testing.taw
   - 2.1.4910
+  - git required
 
 * Mon Apr 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.0.4739-0.1.testing.taw
   - 2.0.4739
