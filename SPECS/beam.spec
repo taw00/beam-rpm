@@ -582,7 +582,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 * Tue May 14 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4910-0.1.testing.taw
   - 2.1.4910
 
-* Sun Apr 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.0.4739-0.1.testing.taw
+* Mon Apr 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.0.4739-0.1.testing.taw
   - 2.0.4739
   - updated spec
   - [node] New version of node.db is not compatible with previous version.  
