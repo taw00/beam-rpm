@@ -46,8 +46,11 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 
 # VERSION
 %define vermajor 2.1
-%define verminor 4910
+%define verminor 4914
+%define verminor_archive hotfix
 Version: %{vermajor}.%{verminor}
+%define version_archive %{vermajor}.%{verminor_archive}
+#%%undefine version_archive
 
 # RELEASE
 %define _pkgrel 1
@@ -117,6 +120,10 @@ Release: %{_release}
 # example: beam-bright_boson_2.0.tar.gz
 %define _archivename_alt4 %{name}-%{codename}_%{vermajor}
 
+%if 0%{?version_archive:1}
+%define _archivename_alt4 %{name}-%{codename}_%{version_archive}
+%endif
+
 # our selection for this build - edit this
 %define _archivename %{_archivename_alt4}
 %define _sourcetree %{_archivename_alt2}
@@ -171,7 +178,7 @@ ExclusiveArch: x86_64 i686 i386
 # As recommended by...
 # https://github.com/BeamMW/beam/wiki/How-to-build
 #BuildRequires: git
-BuildRequires: libtool make autoconf automake patch
+BuildRequires: libtool make autoconf automake
 BuildRequires: gcc-c++ >= 7.0 libstdc++-static
 BuildRequires: cmake >= 3.11.0
 BuildRequires: gettext
@@ -583,6 +590,10 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Thu May 16 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4914-0.1.testing.taw
+  - 2.1.4914
+  - yet ANOTHER archive format dealt with. Grr.
+
 * Thu May 16 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4910-0.1.testing.taw
   - 2.1.4910
   - added /usr/lib64/qt5/bin to path prior to build
