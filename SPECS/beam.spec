@@ -170,12 +170,12 @@ ExclusiveArch: x86_64 i686 i386
 
 # As recommended by...
 # https://github.com/BeamMW/beam/wiki/How-to-build
-BuildRequires: git
+#BuildRequires: git
 BuildRequires: libtool make autoconf automake patch
 BuildRequires: gcc-c++ >= 7.0 libstdc++-static
 BuildRequires: cmake >= 3.11.0
 BuildRequires: gettext
-BuildRequires: openssl-devel boost-devel
+BuildRequires: openssl-devel boost-devel zlib-devel
 # Other BuildRequires listed per package below
 
 # tree, vim-enhanced, and less for mock build environment introspection
@@ -325,6 +325,9 @@ cd .. ; tree -df -L 1 %{projectroot} ; cd -
 
 %build
 # This section starts us in directory {_builddir}/{projectroot}
+
+# path addition potentially needed via comment in beam dev channel
+export PATH=${PATH}:%{_libdir}/qt5/bin
 cd %{sourcetree}
 cmake -DCMAKE_BUILD_TYPE=Release . && make -j4
 cd ..
@@ -505,7 +508,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %defattr(-,root,root,-)
 %license %{sourcetree}/LICENSE
 %doc %{sourcetree}/ui/beam-wallet.cfg.template-desktop
-%doc %{sourcetree_contrib}/USAGE-WARNING.txt
+#%%doc %%{sourcetree_contrib}/USAGE-WARNING.txt
 %{_bindir}/BeamWallet
 %{_bindir}/BeamWallet.wrapper.sh
 %{_bindir}/beam-wallet-desktop
@@ -520,7 +523,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 %defattr(-,root,root,-)
 %license %{sourcetree}/LICENSE
 %doc %{sourcetree}/wallet/beam-wallet.cfg.template-cli
-%doc %{sourcetree_contrib}/USAGE-WARNING.txt
+#%%doc %%{sourcetree_contrib}/USAGE-WARNING.txt
 %{_bindir}/beam-wallet
 %{_bindir}/beam-wallet-cli
 %{_bindir}/beam-wallet-api
@@ -580,9 +583,11 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
-* Tue May 14 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4910-0.1.testing.taw
+* Thu May 16 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4910-0.1.testing.taw
   - 2.1.4910
-  - git required
+  - added /usr/lib64/qt5/bin to path prior to build
+  - new buildrequires: zlib-devel
+  - note, the build gripes about git missing, but git is not needed
 
 * Mon Apr 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.0.4739-0.1.testing.taw
   - 2.0.4739
