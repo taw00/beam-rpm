@@ -64,14 +64,10 @@ beam-node
 
 **READ THE DOCS!** <https://beam-docs.readthedocs.io/en/latest/rtd_pages/user_desktop_wallet_guide.html>
 
-***Important confusion point in the docs:***  
 Please note that if you configure a `.cfg` configuration file, the file is
 expected to be located in whatever directory you are in when you run either the
 wallet or the node (hence the node example above). If you run the wallet from
-the desktop menus the _present working directory_ is your home directory. The
-project documentation suggests that the configuration file needs to be located
-where the binary executable is located, and this is incorrect. An issue has
-been filed on this point: <https://github.com/BeamMW/beam-docs/issues/2>
+the desktop menus the _present working directory_ is your home directory.
 
 ---
 
@@ -83,7 +79,7 @@ been filed on this point: <https://github.com/BeamMW/beam-docs/issues/2>
 Beam Team. I have a reputation though from building [Dash RPMs](https://github.com/taw00/dashcore-rpm)
 for years and years that have been semi-officially-blessed by that team. So
 take that for what it is worth. That being said, proceed with caution and as
-always... Trust no one. At least be suspicious of everyone. :)
+always... **Trust no one.** At least be suspicious of everyone. :)
 
 **Disclaimer2:**  
 These packages have been successfully built and tested, but I lay no claim
@@ -106,14 +102,14 @@ places.
 
 Check out all my crypto-oriented RPM builds:
 - Dash (my longest running and tested builds): <https://github.com/taw00/dashcore-rpm>
-- Electrum-Dash (somewhat experimental): <https://github.com/taw00/electrum-dash-rpm>
+- Electrum-Dash (experimental): <https://github.com/taw00/electrum-dash-rpm>
 - ZCash: <https://github.com/taw00/dashcore-rpm>
 - Beam: <https://github.com/taw00/beam-rpm>
 - Grin: <https://github.com/taw00/grin-rpm>
-- IPFS (somewhat experimental): <https://github.com/taw00/ipfs-rpm>
+- IPFS (experimental): <https://github.com/taw00/ipfs-rpm>
 
 ---
 [1] _Note: Only Fedora is being targeted for builds at this time. CentOS and
-RHEL (EL7) are simply too dated at this point. These packages can't be easily
-build given the default gcc and cmake provided by EL7 platforms. Gotta wait for
-EL8 coming sometime in 2019._
+RHEL (EL7) are simply too dated at this point and I haven't tackled EL8. These
+packages can't be easily build given the default gcc and cmake provided by EL7
+platforms._
