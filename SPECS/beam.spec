@@ -32,7 +32,8 @@
 # <name>-<vermajor.<verminor>-<pkgrel>[.<extraver>][.<snapinfo>].DIST[.<minorbump>]
 
 Name: beam
-%define codename bright_boson
+%define codename cold_wallet
+%undefine codename
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol
 
 %define targetIsProduction 0
@@ -46,7 +47,7 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 
 # VERSION
 %define vermajor 2.1
-%define verminor 4914
+%define verminor 4915
 %define verminor_archive hotfix
 Version: %{vermajor}.%{verminor}
 %define version_archive %{vermajor}.%{verminor_archive}
@@ -125,7 +126,11 @@ Release: %{_release}
 %endif
 
 # our selection for this build - edit this
+%if 0%{?codename:1}
 %define _archivename %{_archivename_alt4}
+%else
+%define _archivename %{_archivename_alt2}
+%endif
 %define _sourcetree %{_archivename_alt2}
 
 %if 0%{?buildQualifier:1}
@@ -144,10 +149,14 @@ Release: %{_release}
 # https://github.com/BeamMW/beam/archive/{codename}-{version}.tar.gz
 # ...is the same as, but with a different filename...
 # https://github.com/BeamMW/beam/archive/{codename}-{version}/beam-{codename}-{version}.tar.gz
+%if 0%{?codename:1}
 %if 0%{?buildQualifier:1}
 Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}-%{buildQualifier}/%{archivename}.tar.gz
 %else
 Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}/%{archivename}.tar.gz
+%endif
+%else
+Source0: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{archivename}.tar.gz
 %endif
 Source1: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{sourcetree_contrib}.tar.gz
 
@@ -590,6 +599,11 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Tue May 28 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4915-0.1.testing.taw
+  - 2.1.4915
+  - The devs AGAIN changed the source tree naming/versioning. This time, they  
+    left the version off entirely.
+
 * Thu May 16 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4914-0.1.testing.taw
   - 2.1.4914
   - yet ANOTHER archive format dealt with. Grr.
