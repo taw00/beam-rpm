@@ -32,8 +32,10 @@
 # <name>-<vermajor.<verminor>-<pkgrel>[.<extraver>][.<snapinfo>].DIST[.<minorbump>]
 
 Name: beam
-%define codename cold_wallet
 %undefine codename
+# because their dev crew doesn't know how to name or version archives or builds.
+# archive is {name}-{codename}
+%define codename beam
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol
 
 %define targetIsProduction 0
@@ -47,11 +49,12 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 
 # VERSION
 %define vermajor 2.1
-%define verminor 4915
-%define verminor_archive hotfix
+%define verminor 4919
 Version: %{vermajor}.%{verminor}
+
+%define verminor_archive hotfix
 %define version_archive %{vermajor}.%{verminor_archive}
-#%%undefine version_archive
+%undefine version_archive
 
 # RELEASE
 %define _pkgrel 1
@@ -127,7 +130,7 @@ Release: %{_release}
 
 # our selection for this build - edit this
 %if 0%{?codename:1}
-%define _archivename %{_archivename_alt4}
+%define _archivename %{_archivename_alt3}
 %else
 %define _archivename %{_archivename_alt2}
 %endif
@@ -145,15 +148,15 @@ Release: %{_release}
 %define sourcetree_contrib %{name}-%{vermajor}-contrib
 # sourcetree defined earlier
 
-# Note, that ...
-# https://github.com/BeamMW/beam/archive/{codename}-{version}.tar.gz
+# Note, that (normally) ...
+# https://github.com/BeamMW/beam/archive/{name}-{version}.tar.gz
 # ...is the same as, but with a different filename...
-# https://github.com/BeamMW/beam/archive/{codename}-{version}/beam-{codename}-{version}.tar.gz
+# https://github.com/BeamMW/beam/archive/{name}-{version}/{name}-{version}.tar.gz
 %if 0%{?codename:1}
 %if 0%{?buildQualifier:1}
 Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}-%{buildQualifier}/%{archivename}.tar.gz
 %else
-Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}/%{archivename}.tar.gz
+Source0: https://github.com/BeamMW/beam/archive/%{codename}-%%{version}/%{archivename}.tar.gz
 %endif
 %else
 Source0: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{archivename}.tar.gz
@@ -599,6 +602,10 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Sat Jun 29 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4919-0.1.testing.taw
+  - 2.1.4919
+  - they named this archive beam-beam-2.1.4919.tar.gz for god knows what reason.
+
 * Tue May 28 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4915-0.1.testing.taw
   - 2.1.4915
   - The devs AGAIN changed the source tree naming/versioning. This time, they  
