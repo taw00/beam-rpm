@@ -48,8 +48,8 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 
 
 # VERSION
-%define vermajor 2.1
-%define verminor 4919
+%define vermajor 2.2
+%define verminor 5635
 Version: %{vermajor}.%{verminor}
 
 %define verminor_archive hotfix
@@ -602,6 +602,10 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Mon Jul 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.2.5635-0.1.testing.taw
+  - 2.2.5635
+  - they named this archive beam-beam-2.2.5635.tar.gz for god knows what reason.
+
 * Sat Jun 29 2019 Todd Warner <t0dd_at_protonmail.com> 2.1.4919-0.1.testing.taw
   - 2.1.4919
   - they named this archive beam-beam-2.1.4919.tar.gz for god knows what reason.
