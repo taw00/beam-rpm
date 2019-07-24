@@ -54,7 +54,7 @@ Version: %{vermajor}.%{verminor}
 # RELEASE
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.2
+  %define _pkgrel 0.1
 %endif
 
 # MINORBUMP
@@ -332,7 +332,7 @@ mkdir -p %{projectroot}
 %setup -q -T -D -a 1 -n %{projectroot}
 
 # rename from silly beam upstream semantics to normal semantics
-mv %{archivename} %{sourcetree}
+#mv %%{archivename} %%{sourcetree}
 
 # For debugging purposes...
 %if ! %{targetIsProduction}
@@ -600,7 +600,6 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
-* Wed Jul 24 2019 Todd Warner <t0dd_at_protonmail.com> 3.0.5660-0.2.hotfix.testing.taw
 * Wed Jul 24 2019 Todd Warner <t0dd_at_protonmail.com> 3.0.5660-0.1.hotfix.testing.taw
   - 3.0.5660 hotfix
 
