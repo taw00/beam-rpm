@@ -32,9 +32,9 @@
 # <name>-<vermajor.<verminor>-<pkgrel>[.<extraver>][.<snapinfo>].DIST[.<minorbump>]
 
 Name: beam
-%undefine codename
 # because their dev crew doesn't know how to name or version archives or builds.
 # archive is {name}-{codename}
+%undefine codename
 %define codename beam
 Summary: Peer-to-peer digital currency implementing mimblewimble, a next generation confidentiality protocol
 
@@ -42,24 +42,19 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 # don't attempt to use this next flag yet
 %define sourceIsBinary 0
 
-# ie. if the dev team includes things like rc1 or a date in the source filename
-%define buildQualifier rc1
+# buildQualifier: if the dev team includes things like hotfix or rc1, rc2, etc.
 %undefine buildQualifier
-
+%define buildQualifier hotfix
 
 # VERSION
-%define vermajor 2.2
-%define verminor 5635
+%define vermajor 3.0
+%define verminor 5660
 Version: %{vermajor}.%{verminor}
-
-%define verminor_archive hotfix
-%define version_archive %{vermajor}.%{verminor_archive}
-%undefine version_archive
 
 # RELEASE
 %define _pkgrel 1
 %if ! %{targetIsProduction}
-  %define _pkgrel 0.1
+  %define _pkgrel 0.2
 %endif
 
 # MINORBUMP
@@ -69,22 +64,28 @@ Version: %{vermajor}.%{verminor}
 # Build the release string - don't edit this
 #
 
-# -- snapinfo
-%define _snapinfo testing
-%define _repackaged rp
-%undefine snapinfo
+# -- note, rp means "repackaged"
 
+# PRODUCTION
+%undefine _snapinfo
 %if %{targetIsProduction}
   %if %{sourceIsBinary}
-    %define snapinfo %{_repackaged}
-  %else
-    %undefine snapinfo
+    %define _snapinfo rp
   %endif
+# TESTING
 %else
+  %define _snapinfo testing
   %if %{sourceIsBinary}
-    %define snapinfo %{_snapinfo}.%{_repackaged}
-  %else
-    %define snapinfo %{_snapinfo}
+    %define _snapinfo testing.rp
+  %endif
+%endif
+
+# add BUILDQUALIFIER
+%define snapinfo %{_snapinfo}
+%if 0%{?buildQualifier:1}
+  %define snapinfo %{buildQualifier}
+  %if 0%{?_snapinfo:1}
+    %define snapinfo %{buildQualifier}.%{_snapinfo}
   %endif
 %endif
 
@@ -121,20 +122,16 @@ Release: %{_release}
 %define _archivename_alt2 %{name}-%{version}
 # example: beam-agile-atom-1.1.4194.tar.gz
 %define _archivename_alt3 %{name}-%{codename}-%{version}
-# example: beam-bright_boson_2.0.tar.gz
+# example: beam-bright_boson_2.0.tar.gz -- I THINK THIS DOESN'T HAPPEN ANYMORE
 %define _archivename_alt4 %{name}-%{codename}_%{vermajor}
-
-%if 0%{?version_archive:1}
-%define _archivename_alt4 %{name}-%{codename}_%{version_archive}
-%endif
 
 # our selection for this build - edit this
 %if 0%{?codename:1}
-%define _archivename %{_archivename_alt3}
+  %define _archivename %{_archivename_alt3}
 %else
-%define _archivename %{_archivename_alt2}
+  %define _archivename %{_archivename_alt2}
 %endif
-%define _sourcetree %{_archivename_alt2}
+%define _sourcetree %{_archivename}
 
 %if 0%{?buildQualifier:1}
   %define archivename %{_archivename}-%{buildQualifier}
@@ -153,14 +150,15 @@ Release: %{_release}
 # ...is the same as, but with a different filename...
 # https://github.com/BeamMW/beam/archive/{name}-{version}/{name}-{version}.tar.gz
 %if 0%{?codename:1}
-%if 0%{?buildQualifier:1}
+  %if 0%{?buildQualifier:1}
 Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}-%{buildQualifier}/%{archivename}.tar.gz
-%else
-Source0: https://github.com/BeamMW/beam/archive/%{codename}-%%{version}/%{archivename}.tar.gz
-%endif
+  %else
+Source0: https://github.com/BeamMW/beam/archive/%{codename}-%{version}/%{archivename}.tar.gz
+  %endif
 %else
 Source0: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{archivename}.tar.gz
 %endif
+
 Source1: https://github.com/taw00/beam-rpm/blob/master/SOURCES/%{sourcetree_contrib}.tar.gz
 
 # If you comment out "debug_package" RPM will create additional RPMs that can
@@ -602,6 +600,10 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Wed Jul 24 2019 Todd Warner <t0dd_at_protonmail.com> 3.0.5660-0.2.hotfix.testing.taw
+* Wed Jul 24 2019 Todd Warner <t0dd_at_protonmail.com> 3.0.5660-0.1.hotfix.testing.taw
+  - 3.0.5660 hotfix
+
 * Mon Jul 08 2019 Todd Warner <t0dd_at_protonmail.com> 2.2.5635-0.1.testing.taw
   - 2.2.5635
   - they named this archive beam-beam-2.2.5635.tar.gz for god knows what reason.
