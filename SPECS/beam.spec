@@ -43,12 +43,12 @@ Summary: Peer-to-peer digital currency implementing mimblewimble, a next generat
 %define sourceIsBinary 0
 
 # buildQualifier: if the dev team includes things like hotfix or rc1, rc2, etc.
-%undefine buildQualifier
 %define buildQualifier hotfix
+%undefine buildQualifier
 
 # VERSION
-%define vermajor 3.0
-%define verminor 5660
+%define vermajor 3.1
+%define verminor 5765
 Version: %{vermajor}.%{verminor}
 
 # RELEASE
@@ -600,6 +600,9 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 #   * https://github.com/BeamMW
 
 %changelog
+* Mon Aug 12 2019 Todd Warner <t0dd_at_protonmail.com> 3.1.5765-0.1.hotfix.testing.taw
+  - 3.1.5765
+
 * Wed Jul 24 2019 Todd Warner <t0dd_at_protonmail.com> 3.0.5660-0.1.hotfix.testing.taw
   - 3.0.5660 hotfix
 
