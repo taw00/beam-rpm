@@ -1,5 +1,7 @@
 # BEAM for Fedora Linux
 
+## THIS REPOSITORY IS NO LONGER BEING MAINTAINED
+
 _"BEAM is a next generation confidential cryptocurrency based on an elegant and
 innovative Mimblewimble protocol."_
 
